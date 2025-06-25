@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import API from '../utils/axios';
-import { Loader2, Image as ImageIcon } from 'lucide-react';
+import { Loader2, Edit } from 'lucide-react';
 
 export default function EditPost() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ title: '', content: '', image: null });
-  const [imagePreview, setImagePreview] = useState(null);
+  const [form, setForm] = useState({ title: '', content: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -15,32 +14,27 @@ export default function EditPost() {
   useEffect(() => {
     const fetchPost = async () => {
       try {
+        setLoading(true);
+        setError('');
         const res = await API.get(`/posts/${id}`);
         setForm({
           title: res.data.title,
           content: res.data.content,
-          image: res.data.image || null,
         });
-        if (res.data.image) {
-          setImagePreview(res.data.image); // Assuming image is a URL from the backend
-        }
       } catch (err) {
-        console.log(err);
+        console.log(err)
         setError('Post not found');
         setTimeout(() => navigate('/'), 1500);
+      } finally {
+        setLoading(false);
       }
     };
     fetchPost();
   }, [id, navigate]);
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === 'image' && files[0]) {
-      setForm({ ...form, image: files[0] });
-      setImagePreview(URL.createObjectURL(files[0]));
-    } else {
-      setForm({ ...form, [name]: value });
-    }
+    setForm({ ...form, [e.target.name]: e.target.value });
+    setError(''); // Clear error on input change
   };
 
   const handleSubmit = async (e) => {
@@ -54,16 +48,7 @@ export default function EditPost() {
     setLoading(true);
 
     try {
-      const formData = new FormData();
-      formData.append('title', form.title);
-      formData.append('content', form.content);
-      if (form.image && form.image instanceof File) {
-        formData.append('image', form.image);
-      }
-
-      await API.put(`/posts/${id}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      await API.put(`/posts/${id}`, form); // Send JSON payload
       setSuccess('Post updated successfully!');
       setTimeout(() => navigate(`/posts/${id}`), 1500);
     } catch (err) {
@@ -80,12 +65,12 @@ export default function EditPost() {
           Edit Post
         </h2>
         {error && (
-          <div className="bg-red-500/20 text-red-300 p-3 rounded-lg mb-4 text-center animate-fade-in">
+          <div className="bg-red-500/20 text-red-300 p-3 rounded-lg mb-6 text-center animate-fade-in">
             {error}
           </div>
         )}
         {success && (
-          <div className="bg-green-500/20 text-green-300 p-3 rounded-lg mb-4 text-center animate-fade-in">
+          <div className="bg-green-500/20 text-green-300 p-3 rounded-lg mb-6 text-center animate-fade-in">
             {success}
           </div>
         )}
@@ -123,31 +108,6 @@ export default function EditPost() {
             />
           </div>
 
-          <div>
-            <label htmlFor="image" className="block text-sm font-medium text-gray-200 mb-2">
-              Update Image (Optional)
-            </label>
-            <div className="relative">
-              <input
-                id="image"
-                name="image"
-                type="file"
-                accept="image/*"
-                onChange={handleChange}
-                className="w-full px-4 py-3 rounded-lg bg-gray-700/50 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-blue-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-500 file:text-white file:hover:bg-blue-600"
-              />
-              {imagePreview && (
-                <div className="mt-4">
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="w-full max-h-64 object-cover rounded-lg shadow-md"
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-
           <button
             type="submit"
             disabled={loading}
@@ -161,7 +121,7 @@ export default function EditPost() {
               </>
             ) : (
               <>
-                <ImageIcon className="w-5 h-5" />
+                <Edit className="w-5 h-5" />
                 Update Post
               </>
             )}
