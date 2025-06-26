@@ -16,9 +16,9 @@ export default function Login() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      navigate('/', { replace: true });
+      window.location.href = '/';
     }
-  }, [navigate]);
+  },);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });

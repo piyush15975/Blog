@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import API from '../utils/axios';
 import { useAuth } from '../context/AuthContext';
-import { Trash, Edit, Loader2 } from 'lucide-react';
+import { Trash, Edit, Loader2, Home } from 'lucide-react';
 
 export default function SinglePost() {
   const { id } = useParams();
@@ -81,6 +81,18 @@ export default function SinglePost() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white p-6 md:p-12">
+      {/* Navigation Bar */}
+      <nav className="max-w-3xl mx-auto mb-6">
+        <button
+          onClick={() => navigate('/')}
+          className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-300 flex items-center gap-2 transform hover:scale-105 animate-fade-in"
+          aria-label="Back to home"
+        >
+          <Home className="w-5 h-5" />
+          Home
+        </button>
+      </nav>
+
       <div className="max-w-3xl mx-auto bg-gray-800/90 backdrop-blur-sm p-8 rounded-2xl shadow-2xl space-y-6 animate-fade-in">
         {/* Feedback Messages */}
         {success && (
@@ -107,8 +119,7 @@ export default function SinglePost() {
           {post.title}
         </h1>
         <p className="text-sm text-gray-300">
-          By{' '}
-          <span className="font-medium">{post.author?.username || 'Unknown'}</span>
+          By <span className="font-medium">{post.author?.username || 'Unknown'}</span>
         </p>
         <p className="mt-4 text-gray-200 whitespace-pre-line leading-relaxed">
           {post.content}

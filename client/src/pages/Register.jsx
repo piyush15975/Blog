@@ -22,7 +22,7 @@ export default function Register() {
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    setError(''); // Clear error on input change
+    setError('');
   };
 
   const handleSubmit = async (e) => {
@@ -38,7 +38,7 @@ export default function Register() {
     try {
       await API.post('/auth/register', form);
       setSuccess('Registration successful! Redirecting to login...');
-      setTimeout(() => navigate('/login', { replace: true }), 1500);
+      setTimeout(() => navigate('/login'), 1000); // redirect to login
     } catch (err) {
       setError(err.response?.data?.msg || 'Registration failed. Please try again.');
     } finally {
@@ -49,7 +49,6 @@ export default function Register() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center p-4 sm:p-6">
       <div className="w-full max-w-md bg-gray-800/90 backdrop-blur-sm p-8 rounded-2xl shadow-2xl transition-all duration-300">
-        {/* Header */}
         <div className="text-center mb-10 animate-fade-in">
           <div className="w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-auto mb-4 flex items-center justify-center">
             <UserPlus className="w-6 h-6 text-white" />
@@ -60,7 +59,6 @@ export default function Register() {
           <p className="text-sm text-gray-300 mt-2">Join the blog platform</p>
         </div>
 
-        {/* Feedback Messages */}
         {error && (
           <div className="bg-red-500/20 text-red-300 p-3 rounded-lg mb-6 text-center animate-fade-in">
             {error}
@@ -72,7 +70,6 @@ export default function Register() {
           </div>
         )}
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <Input
             label="Full Name"
@@ -124,7 +121,6 @@ export default function Register() {
           </button>
         </form>
 
-        {/* Footer */}
         <p className="mt-6 text-center text-sm text-gray-300">
           Already have an account?{' '}
           <button
@@ -140,7 +136,6 @@ export default function Register() {
   );
 }
 
-// Reusable Input component
 function Input({ label, name, value, onChange, placeholder, focusedField, setFocusedField }) {
   return (
     <div>
@@ -167,7 +162,6 @@ function Input({ label, name, value, onChange, placeholder, focusedField, setFoc
   );
 }
 
-// Reusable Password Input with toggle
 function PasswordInput({ label, name, value, onChange, placeholder, show, toggle, focusedField, setFocusedField }) {
   return (
     <div>
